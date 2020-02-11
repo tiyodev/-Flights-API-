@@ -1,0 +1,5 @@
+### JAZZ provider
+GET http://flights.beta.bcmenergy.fr/jazz/flights?departure_airport=CDG&arrival_airport=LHR&departure_date=2019-03-28
+
+#### MOON provider
+GET http://flights.beta.bcmenergy.fr/moon/flights?departure_airport=CDG&arrival_airport=LHR&departure_date=2019-03-28
