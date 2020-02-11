@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import HttpError from '../common/http_error';
 import { HttpStatus } from '../common/http_code';
 import ErrorCode from '../common/error_code';
+import { getAndFormatFlights } from '../services/flights.service';
 
 function checkDateFormat(date: string): boolean {
   return /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(date);
@@ -103,7 +104,7 @@ function checkGetFlightsParameters({
   return;
 }
 
-export function getFlights(req: Request, res: Response): void {
+export async function getFlights(req: Request, res: Response): Promise<void> {
   // Get all URI parameters
   const {
     departure_airport: departureAirport,
@@ -121,6 +122,11 @@ export function getFlights(req: Request, res: Response): void {
     returnDate,
     tripType,
   });
+
+  console.log('YBO 1');
+
+  // Get all flights
+  await getAndFormatFlights(departureAirport, arrivalAirport, departureDate, returnDate, tripType);
 
   if (err) {
     res.status(err.status).json(err);
