@@ -1,12 +1,22 @@
 import { FlightWithPrice } from '../entity/flight.entity';
 import axios, { AxiosResponse } from 'axios';
 import { FlightSuppliersInterface, FlightBySupplier } from './flight_supplier.entity';
+import Logger from '../logger/logger';
 
-export default class JazzFlightSupplier implements FlightSuppliersInterface {
+class JazzFlightSupplier implements FlightSuppliersInterface {
+  private static instance: JazzFlightSupplier;
   name: string;
 
-  constructor() {
+  private constructor() {
     this.name = 'JAZZ';
+    Logger.logDebug('Create an instance of JazzFlightSupplier');
+  }
+
+  static getInstance(): JazzFlightSupplier {
+    if (!JazzFlightSupplier.instance) {
+      JazzFlightSupplier.instance = new JazzFlightSupplier();
+    }
+    return JazzFlightSupplier.instance;
   }
 
   async request({
@@ -18,7 +28,7 @@ export default class JazzFlightSupplier implements FlightSuppliersInterface {
     arrivalAirport: string;
     departureDate: string;
   }): Promise<FlightBySupplier> {
-    console.log('YBO JAZZ get');
+    console.log(`YBO ${this.name} get`);
     try {
       const response: AxiosResponse = await axios.get(
         `${process.env.AIR_JAZZ_SUPPLIER_URL}?departure_airport=${departureAirport}&arrival_airport=${arrivalAirport}&departure_date=${departureDate}`,
@@ -32,7 +42,7 @@ export default class JazzFlightSupplier implements FlightSuppliersInterface {
   }
 
   protected format(data: any): FlightWithPrice[] {
-    console.log('YBO JAZZ format');
+    console.log(`YBO ${this.name} format`);
     if (!data) return;
 
     if (data instanceof Array) {
@@ -54,3 +64,5 @@ export default class JazzFlightSupplier implements FlightSuppliersInterface {
     return;
   }
 }
+
+export default JazzFlightSupplier.getInstance();

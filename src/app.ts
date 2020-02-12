@@ -4,15 +4,15 @@ import lusca from 'lusca';
 import dotenv from 'dotenv';
 
 /**
+ * Load environment variables from .env file, where API keys and passwords are configured.
+ */
+dotenv.config({ path: '.env' });
+
+/**
  * Import all routes
  */
 import homeRoutes from './api/v1/routes/home.route';
 import flightsRoutes from './api/v1/routes/flights.route';
-
-/**
- * Load environment variables from .env file, where API keys and passwords are configured.
- */
-dotenv.config({ path: '.env' });
 
 // Create Express server
 const app = express();

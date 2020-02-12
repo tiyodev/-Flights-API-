@@ -1,6 +1,7 @@
 import errorHandler from 'errorhandler';
 import { Request, Response } from 'express';
 import app from './app';
+import Logger from './api/v1/logger/logger';
 
 /**
  * Error Handler.
@@ -10,7 +11,7 @@ if (process.env.NODE_ENV === 'dev') {
   app.use(errorHandler());
 } else {
   app.use((err: Error, req: Request, res: Response) => {
-    console.error(err);
+    Logger.logError(err);
     res.status(500).send('Server Error');
   });
 }
@@ -19,6 +20,19 @@ if (process.env.NODE_ENV === 'dev') {
  * Start Express server.
  */
 app.listen(process.env.PORT || 3000, () => {
-  console.log('  App is running at http://localhost:%d in %s mode', process.env.PORT, process.env.NODE_ENV);
-  console.log('  Press CTRL-C to stop\n');
+  Logger.log(`%s App is running at %s in %s mode`, [
+    {
+      data: '✓',
+      color: 'green',
+    },
+    {
+      data: `http://localhost:${process.env.PORT || 3000}`,
+      color: 'blue',
+    },
+    {
+      data: process.env.NODE_ENV,
+      color: 'blue',
+    },
+  ]);
+  Logger.log(`Press CTRL-C to stop`);
 });

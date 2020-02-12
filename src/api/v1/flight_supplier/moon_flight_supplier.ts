@@ -1,12 +1,22 @@
 import axios, { AxiosResponse } from 'axios';
 import { FlightWithPrice } from '../entity/flight.entity';
 import { FlightSuppliersInterface, FlightBySupplier } from './flight_supplier.entity';
+import Logger from '../logger/logger';
 
-export default class MoonFlightSupplier implements FlightSuppliersInterface {
+class MoonFlightSupplier implements FlightSuppliersInterface {
+  private static instance: MoonFlightSupplier;
   name: string;
 
-  constructor() {
-    this.name = 'MOON';
+  private constructor() {
+    this.name = 'JAZZ';
+    Logger.logDebug('Create an instance of MoonFlightSupplier');
+  }
+
+  static getInstance(): MoonFlightSupplier {
+    if (!MoonFlightSupplier.instance) {
+      MoonFlightSupplier.instance = new MoonFlightSupplier();
+    }
+    return MoonFlightSupplier.instance;
   }
 
   async request({
@@ -18,7 +28,7 @@ export default class MoonFlightSupplier implements FlightSuppliersInterface {
     arrivalAirport: string;
     departureDate: string;
   }): Promise<FlightBySupplier> {
-    console.log('YBO MOON get');
+    console.log(`YBO ${this.name} get`);
     try {
       const response: AxiosResponse = await axios.get(
         `${process.env.AIR_MOON_SUPPLIER_URL}?departure_airport=${departureAirport}&arrival_airport=${arrivalAirport}&departure_date=${departureDate}`,
@@ -32,7 +42,7 @@ export default class MoonFlightSupplier implements FlightSuppliersInterface {
   }
 
   format(data: any): FlightWithPrice[] {
-    console.log('YBO MOON format');
+    console.log(`YBO ${this.name} format`);
     if (!data) return;
 
     if (data instanceof Array) {
@@ -54,3 +64,5 @@ export default class MoonFlightSupplier implements FlightSuppliersInterface {
     return null;
   }
 }
+
+export default MoonFlightSupplier.getInstance();
