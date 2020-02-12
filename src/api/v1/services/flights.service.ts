@@ -1,8 +1,9 @@
 import HttpError from '../common/http_error';
 import { HttpStatus } from '../common/http_code';
 import ErrorCode from '../common/error_code';
-import { FlightSuppliers, getFlightsSuppliers, FlightBySupplier } from './flight_suppliers.service';
 import { FlightWithPrice, FlightsByPrice, Flight } from '../entity/flight.entity';
+import { FlightBySupplier, FlightSuppliersInterface } from '../flight_supplier/flight_supplier.entity';
+import FlightSupplier from '../flight_supplier/flight_suplier';
 
 function filterReturnFlightByArrivalDate(
   arrivalTime: Date,
@@ -97,8 +98,8 @@ async function getOneWayFlights({
 }): Promise<FlightsByPrice[]> {
   // Get flights from all suppliers
   const flightRequestResults: FlightBySupplier[] = await Promise.all(
-    getFlightsSuppliers.map((supplier: FlightSuppliers) =>
-      supplier.request({ supplierName: supplier.name, departureAirport, arrivalAirport, departureDate }),
+    FlightSupplier.getAllFlightSupplier().map((supplier: FlightSuppliersInterface) =>
+      supplier.request({ departureAirport, arrivalAirport, departureDate }),
     ),
   );
 
@@ -128,8 +129,8 @@ async function getTwoWayFlights({
 }): Promise<FlightsByPrice[]> {
   // Get departure flights from all suppliers
   const departureFlightRequestResults: FlightBySupplier[] = await Promise.all(
-    getFlightsSuppliers.map((supplier: FlightSuppliers) =>
-      supplier.request({ supplierName: supplier.name, departureAirport, arrivalAirport, departureDate }),
+    FlightSupplier.getAllFlightSupplier().map((supplier: FlightSuppliersInterface) =>
+      supplier.request({ departureAirport, arrivalAirport, departureDate }),
     ),
   );
   // Concat all departure flights
@@ -138,9 +139,8 @@ async function getTwoWayFlights({
 
   // Get all return flights
   const returnFlightRequestResults: FlightBySupplier[] = await Promise.all(
-    getFlightsSuppliers.map((supplier: FlightSuppliers) =>
+    FlightSupplier.getAllFlightSupplier().map((supplier: FlightSuppliersInterface) =>
       supplier.request({
-        supplierName: supplier.name,
         departureAirport: arrivalAirport,
         arrivalAirport: departureAirport,
         departureDate: returnDate,
