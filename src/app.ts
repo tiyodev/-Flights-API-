@@ -30,6 +30,7 @@ app.use(lusca.xssProtection(true));
  */
 app.use('/api/v1/', homeRoutes);
 app.use('/api/v1/user/', userRoutes);
+// This route is protected by authJwt middleware
 app.use('/api/v1/flights/', authJwt, flightsRoutes);
 
 // catch 404 HTTP error
