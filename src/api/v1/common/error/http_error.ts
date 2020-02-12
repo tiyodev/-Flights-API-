@@ -11,6 +11,10 @@ export default class HttpError extends Error {
     this.data = data;
   }
 
+  toString(): string {
+    return this.message;
+  }
+
   toJSON(): object {
     return {
       status: this.status,

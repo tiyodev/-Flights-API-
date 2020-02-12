@@ -5,4 +5,7 @@ export const ErrorCode = {
   INVALID_RETURN_DATE: 'invalid.param.return_date',
   INVALID_TRIP_TYPE: 'invalid.param.trip_tip',
   INVALID_DATES: 'invalid.dates',
+  BAD_CREDENTIALS: 'bad.credentials',
+  JAZZ_API_ERROR: 'jazz.api.error',
+  MOON_API_ERROR: 'moon.api.error',
 };

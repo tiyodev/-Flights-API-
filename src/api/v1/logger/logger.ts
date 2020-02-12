@@ -1,4 +1,5 @@
 import chalk from 'chalk';
+import HttpError from '../common/error/http_error';
 
 const LoggerLevel = {
   ALL: 'ALL',
@@ -62,15 +63,16 @@ class Logger {
     }
   }
 
-  logError(error: Error): void {
+  logError(error: Error | HttpError): void {
     if (process.env.LOGGER_LEVEL === LoggerLevel.OFF) return;
-
     if (
       process.env.LOGGER_LEVEL === LoggerLevel.ALL ||
       process.env.LOGGER_LEVEL === LoggerLevel.ERROR ||
       process.env.LOGGER_LEVEL === LoggerLevel.DEBUG
     ) {
-      console.error(`${new Date(Date.now()).toISOString()}: ${chalk.red(error)}`);
+      console.error(`${new Date(Date.now()).toISOString()}: ${chalk.red(error?.stack || error)}`);
+    } else {
+      console.error(`${new Date(Date.now()).toISOString()}: ${chalk.red(error.toString())}`);
     }
   }
 }

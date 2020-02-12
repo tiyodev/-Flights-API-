@@ -1,4 +1,3 @@
-import { Request, Response } from 'express';
 import { HttpStatus } from '../common/error/http_code';
 import { isValidDate, isValidDateTime, isFirstDateIsAfterSecondDate } from '../common/tools/validation';
 import { ErrorCode } from '../common/error/error_code';
@@ -91,7 +90,7 @@ function validateGetFlightsByPriceParameters({
   }
 }
 
-export async function getFlightsByPrice(req: Request, res: Response): Promise<void> {
+export async function getFlightsByPrice(req: any, res: any): Promise<void> {
   try {
     // Get all URI parameters
     const {

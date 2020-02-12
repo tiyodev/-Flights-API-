@@ -5,8 +5,8 @@ import { Request, Response } from 'express';
  * @param {Request} req
  * @param {Response} res
  */
-export const pingApi = (req: Request, res: Response): void => {
+export function pingApi(req: Request, res: Response): void {
   res.json({
-    message: 'Welcome to the API v1',
+    message: 'Welcome to the Flight API v1',
   });
-};
+}
