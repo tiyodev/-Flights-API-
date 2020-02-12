@@ -8,7 +8,7 @@ class MoonFlightSupplier implements FlightSuppliersInterface {
   name: string;
 
   private constructor() {
-    this.name = 'JAZZ';
+    this.name = 'MOON';
     Logger.logDebug('Create an instance of MoonFlightSupplier');
   }
 

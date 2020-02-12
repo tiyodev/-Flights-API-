@@ -70,7 +70,7 @@ class Logger {
       process.env.LOGGER_LEVEL === LoggerLevel.ERROR ||
       process.env.LOGGER_LEVEL === LoggerLevel.DEBUG
     ) {
-      console.error(`${chalk.red(JSON.stringify(error))}`);
+      console.error(`${chalk.red(error)}`);
     }
   }
 }

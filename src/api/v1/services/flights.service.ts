@@ -1,9 +1,9 @@
-import HttpError from '../common/http_error';
-import { HttpStatus } from '../common/http_code';
-import ErrorCode from '../common/error_code';
+import { HttpStatus } from '../common/error/http_code';
 import { FlightWithPrice, FlightsByPrice, Flight } from '../entity/flight.entity';
 import { FlightBySupplier, FlightSuppliersInterface } from '../flight_supplier/flight_supplier.entity';
 import FlightSupplier from '../flight_supplier/flight_suplier';
+import { ErrorCode } from '../common/error/error_code';
+import HttpError from '../common/error/http_error';
 
 function filterReturnFlightByArrivalDate(
   arrivalTime: Date,
