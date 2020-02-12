@@ -1,13 +1,5 @@
-{
-    "editor.formatOnSave": true,
-    "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": true
-    },
-    "eslint.validate": ["javascript", "typescript"],
-    "[javascript]": {
-        "editor.formatOnSave": false
-    },
-    "[typescript]": {
-        "editor.formatOnSave": false
-    }
-}
+ "id": "8351fddf-8e52-48a4-ac37-89ddd82a5615",
+      "departure_airport": "CDG",
+      "arrival_airport": "LHR",
+      "departure_time": "2019-03-28T20:23",
+      "arrival_time": "2019-03-29T06:23"

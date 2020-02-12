@@ -3,6 +3,7 @@ import HttpError from '../common/http_error';
 import { HttpStatus } from '../common/http_code';
 import ErrorCode from '../common/error_code';
 import { getAndFormatFlights } from '../services/flights.service';
+import { FlightsByPrice } from '../entity/flight.entity';
 
 function checkDateFormat(date: string): boolean {
   return /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(date);
@@ -13,7 +14,7 @@ function checkDateTimeFormat(date: string): boolean {
 }
 
 function checkFirstDateIsAfterSecondDate(firstDate: Date, secondeDate: Date): HttpError | undefined {
-  if (firstDate <= secondeDate) {
+  if (firstDate < secondeDate) {
     return new HttpError(
       HttpStatus.BAD_REQUEST,
       ErrorCode.INVALID_DATES,
@@ -77,12 +78,12 @@ function checkGetFlightsParameters({
     );
   }
 
-  // If tripType is equals to 'OW' then returnDate must be set
-  if (tripType === 'OW' && !returnDate) {
+  // If tripType is equals to 'R' then returnDate must be set
+  if (tripType === 'R' && !returnDate) {
     return new HttpError(
       HttpStatus.BAD_REQUEST,
       ErrorCode.INVALID_RETURN_DATE,
-      `When tripType is equald to 'OW' then returnDate is mandatory`,
+      `When tripType is equald to 'R' then returnDate is mandatory`,
       {
         tripType,
         returnDate,
@@ -91,7 +92,7 @@ function checkGetFlightsParameters({
   }
 
   // Check if returnDate is a correct date
-  if (departureDate && !checkDateFormat(returnDate) && !checkDateTimeFormat(returnDate)) {
+  if (returnDate && !checkDateFormat(returnDate) && !checkDateTimeFormat(returnDate)) {
     return new HttpError(HttpStatus.BAD_REQUEST, ErrorCode.INVALID_RETURN_DATE, `Invalid date 'returnDate'`, {
       returnDate,
     });
@@ -123,16 +124,20 @@ export async function getFlights(req: Request, res: Response): Promise<void> {
     tripType,
   });
 
-  console.log('YBO 1');
-
-  // Get all flights
-  await getAndFormatFlights(departureAirport, arrivalAirport, departureDate, returnDate, tripType);
-
   if (err) {
     res.status(err.status).json(err);
   } else {
+    // Get all flights
+    const flights: FlightsByPrice[] = await getAndFormatFlights(
+      departureAirport,
+      arrivalAirport,
+      departureDate,
+      returnDate,
+      tripType,
+    );
+
     res.json({
-      message: 'Welcome to the API v1',
+      message: flights,
     });
   }
 }

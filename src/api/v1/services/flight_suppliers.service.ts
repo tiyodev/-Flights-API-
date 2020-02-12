@@ -1,25 +1,32 @@
-import Flight from '../entity/flight.entity';
+import { FlightWithPrice } from '../entity/flight.entity';
 import axios, { AxiosResponse } from 'axios';
+
+export type FlightBySupplier = {
+  supplierName: string;
+  flights: FlightWithPrice[];
+};
 
 interface FlightSuppliers {
   name: string;
   request: ({
+    supplierName,
     departureAirport,
     arrivalAirport,
     departureDate,
   }: {
+    supplierName: string;
     departureAirport: string;
     arrivalAirport: string;
     departureDate: string;
-  }) => Promise<Flight[]>;
+  }) => Promise<FlightBySupplier>;
 }
 
-function formatJazzFlights(data: any): Flight[] {
+function formatJazzFlights(data: any): FlightWithPrice[] {
   console.log('YBO JAZZ format');
   if (!data) return;
 
   if (data instanceof Array) {
-    return data.reduce((acc: Flight[], cur: any) => {
+    return data.reduce((acc: FlightWithPrice[], cur: any) => {
       return [
         ...acc,
         {
@@ -38,32 +45,35 @@ function formatJazzFlights(data: any): Flight[] {
 }
 
 async function getAirJazzFlights({
+  supplierName,
   departureAirport,
   arrivalAirport,
   departureDate,
 }: {
+  supplierName: string;
   departureAirport: string;
   arrivalAirport: string;
   departureDate: string;
-}): Promise<Flight[]> {
+}): Promise<FlightBySupplier> {
   console.log('YBO JAZZ get');
   try {
     const response: AxiosResponse = await axios.get(
       `${process.env.AIR_JAZZ_SUPPLIER_URL}?departure_airport=${departureAirport}&arrival_airport=${arrivalAirport}&departure_date=${departureDate}`,
     );
-    return formatJazzFlights(response.data);
+    return { supplierName, flights: formatJazzFlights(response.data) };
   } catch (err) {
+    console.error(err);
     // TODO throw an error
     throw new Error();
   }
 }
 
-function formatMoonFlights(data: any): Flight[] {
+function formatMoonFlights(data: any): FlightWithPrice[] {
   console.log('YBO MOON format');
   if (!data) return;
 
   if (data instanceof Array) {
-    return data.reduce((acc: Flight[], cur: any) => {
+    return data.reduce((acc: FlightWithPrice[], cur: any) => {
       return [
         ...acc,
         {
@@ -82,21 +92,24 @@ function formatMoonFlights(data: any): Flight[] {
 }
 
 async function getAirMoonFlights({
+  supplierName,
   departureAirport,
   arrivalAirport,
   departureDate,
 }: {
+  supplierName: string;
   departureAirport: string;
   arrivalAirport: string;
   departureDate: string;
-}): Promise<Flight[]> {
+}): Promise<FlightBySupplier> {
   console.log('YBO MOON get');
   try {
     const response: AxiosResponse = await axios.get(
       `${process.env.AIR_MOON_SUPPLIER_URL}?departure_airport=${departureAirport}&arrival_airport=${arrivalAirport}&departure_date=${departureDate}`,
     );
-    return formatMoonFlights(response.data);
+    return { supplierName, flights: formatMoonFlights(response.data) };
   } catch (err) {
+    console.error(err);
     // TODO throw an error
     throw new Error();
   }

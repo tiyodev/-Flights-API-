@@ -1,9 +1,17 @@
-export default interface Flight {
+export interface Flight {
   id: string;
-  price: number;
   departureAirport: string;
   arrivalAirport: string;
   departureTime: Date;
   arrivalTime: Date;
-  returnFlights?: Flight[];
+  returnFlights?: FlightsByPrice[];
+}
+
+export interface FlightWithPrice extends Flight {
+  price?: number;
+}
+
+export interface FlightsByPrice {
+  price: number;
+  flights: Flight[];
 }
