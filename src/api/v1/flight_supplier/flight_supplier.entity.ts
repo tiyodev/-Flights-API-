@@ -1,4 +1,4 @@
-import { FlightWithPrice } from '../entity/flight.entity';
+import { FlightWithPrice } from '../flight/flight.entity';
 
 export type FlightBySupplier = {
   supplierName: string;

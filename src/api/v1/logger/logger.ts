@@ -50,7 +50,7 @@ class Logger {
     if (process.env.LOGGER_LEVEL === LoggerLevel.OFF) return;
 
     if (process.env.LOGGER_LEVEL === LoggerLevel.ALL || process.env.LOGGER_LEVEL === LoggerLevel.DEBUG) {
-      console.error(`${chalk.gray(message)}`);
+      console.error(`${new Date(Date.now()).toISOString()}: ${chalk.gray(message)}`);
     }
   }
 
@@ -58,7 +58,7 @@ class Logger {
     if (process.env.LOGGER_LEVEL === LoggerLevel.OFF) return;
 
     if (process.env.LOGGER_LEVEL === LoggerLevel.ALL || process.env.LOGGER_LEVEL === LoggerLevel.INFO) {
-      console.error(message);
+      console.info(`${new Date(Date.now()).toISOString()}: ${message}`);
     }
   }
 
@@ -70,7 +70,7 @@ class Logger {
       process.env.LOGGER_LEVEL === LoggerLevel.ERROR ||
       process.env.LOGGER_LEVEL === LoggerLevel.DEBUG
     ) {
-      console.error(`${chalk.red(error)}`);
+      console.error(`${new Date(Date.now()).toISOString()}: ${chalk.red(error)}`);
     }
   }
 }

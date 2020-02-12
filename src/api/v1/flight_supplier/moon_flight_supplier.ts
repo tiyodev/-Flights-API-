@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-import { FlightWithPrice } from '../entity/flight.entity';
+import { FlightWithPrice } from '../flight/flight.entity';
 import { FlightSuppliersInterface, FlightBySupplier } from './flight_supplier.entity';
 import Logger from '../logger/logger';
 
@@ -28,21 +28,19 @@ class MoonFlightSupplier implements FlightSuppliersInterface {
     arrivalAirport: string;
     departureDate: string;
   }): Promise<FlightBySupplier> {
-    console.log(`YBO ${this.name} get`);
+    Logger.logDebug('Request flights from MOON supplier');
     try {
       const response: AxiosResponse = await axios.get(
         `${process.env.AIR_MOON_SUPPLIER_URL}?departure_airport=${departureAirport}&arrival_airport=${arrivalAirport}&departure_date=${departureDate}`,
       );
       return { supplierName: this.name, flights: this.format(response.data) };
     } catch (err) {
-      console.error(err);
-      // TODO throw an error
-      throw new Error();
+      Logger.logError(err);
+      throw new Error(err);
     }
   }
 
   format(data: any): FlightWithPrice[] {
-    console.log(`YBO ${this.name} format`);
     if (!data) return;
 
     if (data instanceof Array) {

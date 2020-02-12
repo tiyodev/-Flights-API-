@@ -1,11 +1,10 @@
 import { Request, Response } from 'express';
 import { HttpStatus } from '../common/error/http_code';
-import { getAndFormatFlights } from '../services/flights.service';
-import { FlightsByPrice } from '../entity/flight.entity';
 import { isValidDate, isValidDateTime, isFirstDateIsAfterSecondDate } from '../common/tools/validation';
 import { ErrorCode } from '../common/error/error_code';
 import HttpError from '../common/error/http_error';
 import logger from '../logger/logger';
+import FlightSearch from '../flight_search/flight_search';
 
 function validateGetFlightsByPriceParameters({
   departureAirport,
@@ -101,7 +100,7 @@ export async function getFlightsByPrice(req: Request, res: Response): Promise<vo
       departure_date: departureDate,
       return_date: returnDate,
       tripType,
-    } = req?.query;
+    } = req.query;
 
     // Query validation
     validateGetFlightsByPriceParameters({
@@ -112,26 +111,20 @@ export async function getFlightsByPrice(req: Request, res: Response): Promise<vo
       tripType,
     });
 
-    // Get all flights by price
-    const flightsByPrice: FlightsByPrice[] = await getAndFormatFlights(
+    // Get a search flights instance
+    const flighsSearch = new FlightSearch({
       departureAirport,
       arrivalAirport,
       departureDate,
       returnDate,
       tripType,
-    );
-
-    // Return result with query parameters
-    res.json({
-      search: {
-        departureAirport,
-        arrivalAirport,
-        departureDate,
-        returnDate,
-        tripType,
-      },
-      flightsByPrice,
     });
+
+    // Search flights by price
+    await flighsSearch.searchByPrice();
+
+    // Return result
+    res.json(flighsSearch.toJSON());
   } catch (err) {
     logger.logError(err);
     if (err.status) {
