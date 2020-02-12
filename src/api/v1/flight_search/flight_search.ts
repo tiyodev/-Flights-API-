@@ -1,12 +1,15 @@
-import { FlightBySupplier, FlightSuppliersInterface } from './../flight_supplier/flight_supplier.entity';
+import { FlightBySupplier } from './../flight_supplier/flight_supplier.entity';
 import { FlightSearchParameter, FlightSearchResult } from './flight_search.entity';
 import { FlightsByPrice, FlightWithPrice } from '../flight/flight.entity';
 import HttpError from '../common/error/http_error';
 import { HttpStatus } from '../common/error/http_code';
 import { ErrorCode } from '../common/error/error_code';
-import FlightSupplier from '../flight_supplier/flight_suplier';
-import { groupFlightsByPrice } from './flight_search.helper';
-import logger from '../logger/logger';
+import {
+  mergeFlightsByPriceAndOrderByPriceAndDate,
+  getFlightsFromAllSupplier,
+  concatFlightsFromMultipleSupplier,
+} from './flight_search.helper';
+import Logger from '../logger/logger';
 
 export default class FlightSearch {
   // Search parameters
@@ -19,13 +22,13 @@ export default class FlightSearch {
   }
 
   async searchByPrice(): Promise<FlightSearch> {
-    logger.logInfo(`A new search is run with parameters: ${JSON.stringify(this.researchCriterias)}`);
+    Logger.logInfo(`A new search is run with parameters: ${JSON.stringify(this.researchCriterias)}`);
 
     if (this.researchCriterias.tripType === 'OW') {
       this.flightsByPrice = await this.getOneWayFlights();
       return this;
     } else if (this.researchCriterias.tripType === 'R') {
-      this.flightsByPrice = await this.getTwoWayFlights(this.researchCriterias);
+      this.flightsByPrice = await this.getTwoWayFlights();
       return this;
     } else {
       throw new HttpError(HttpStatus.BAD_REQUEST, ErrorCode.INVALID_TRIP_TYPE, 'Invalid trip type', {
@@ -36,75 +39,45 @@ export default class FlightSearch {
 
   private async getOneWayFlights(): Promise<FlightsByPrice[]> {
     // Get flights from all suppliers
-    const flightRequestResults: FlightBySupplier[] = await Promise.all(
-      FlightSupplier.getAllFlightSupplier().map((supplier: FlightSuppliersInterface) =>
-        supplier.request({
-          departureAirport: this.researchCriterias.departureAirport,
-          arrivalAirport: this.researchCriterias.arrivalAirport,
-          departureDate: this.researchCriterias.departureDate,
-        }),
-      ),
-    );
+    const flightRequestResults: FlightBySupplier[] = await getFlightsFromAllSupplier({
+      departureAirport: this.researchCriterias.departureAirport,
+      arrivalAirport: this.researchCriterias.arrivalAirport,
+      departureDate: this.researchCriterias.departureDate,
+    });
 
-    // Concat all flights
-    let allFlights: FlightWithPrice[] = [];
-    flightRequestResults.map(x => (allFlights = [...allFlights, ...x.flights]));
+    // Concat all flights from multiple supplier
+    const allFlights: FlightWithPrice[] = concatFlightsFromMultipleSupplier(flightRequestResults);
 
-    // Group flights by price
-    const groupFlights: FlightsByPrice[] = groupFlightsByPrice(allFlights);
-
-    // Order flights by price
-    groupFlights.sort((firstFlight, secondFlight) => firstFlight.price - secondFlight.price);
-
-    return groupFlights;
+    // Return merge and order flights by price and departureTime
+    return mergeFlightsByPriceAndOrderByPriceAndDate(allFlights);
   }
 
-  private async getTwoWayFlights({
-    departureAirport,
-    departureDate,
-    arrivalAirport,
-    returnDate,
-  }: {
-    departureAirport: string;
-    departureDate: string;
-    arrivalAirport: string;
-    returnDate: string;
-  }): Promise<FlightsByPrice[]> {
-    // Get departure flights from all suppliers
-    const departureFlightRequestResults: FlightBySupplier[] = await Promise.all(
-      FlightSupplier.getAllFlightSupplier().map((supplier: FlightSuppliersInterface) =>
-        supplier.request({ departureAirport, arrivalAirport, departureDate }),
-      ),
-    );
-    // Concat all departure flights
-    let allDepartureFlights: FlightWithPrice[] = [];
-    departureFlightRequestResults.map(x => (allDepartureFlights = [...allDepartureFlights, ...x.flights]));
+  private async getTwoWayFlights(): Promise<FlightsByPrice[]> {
+    // Get all departure flights and get all return flights for all supplier
+    const [departureFlightRequestResults, returnFlightRequestResults] = await Promise.all([
+      getFlightsFromAllSupplier({
+        departureAirport: this.researchCriterias.departureAirport,
+        arrivalAirport: this.researchCriterias.arrivalAirport,
+        departureDate: this.researchCriterias.departureDate,
+      }),
+      getFlightsFromAllSupplier({
+        departureAirport: this.researchCriterias.arrivalAirport,
+        arrivalAirport: this.researchCriterias.departureAirport,
+        departureDate: this.researchCriterias.returnDate,
+      }),
+    ]);
 
-    // Get all return flights
-    const returnFlightRequestResults: FlightBySupplier[] = await Promise.all(
-      FlightSupplier.getAllFlightSupplier().map((supplier: FlightSuppliersInterface) =>
-        supplier.request({
-          departureAirport: arrivalAirport,
-          arrivalAirport: departureAirport,
-          departureDate: returnDate,
-        }),
-      ),
-    );
+    // Concat all departure flights from multiple supplier
+    const allDepartureFlights: FlightWithPrice[] = concatFlightsFromMultipleSupplier(departureFlightRequestResults);
 
-    // Concat all return flights
-    let allReturnFlights: FlightWithPrice[] = [];
-    returnFlightRequestResults.map(x => (allReturnFlights = [...allReturnFlights, ...x.flights]));
+    // Concat all return flights from multiple supplier
+    const allReturnFlights: FlightWithPrice[] = concatFlightsFromMultipleSupplier(returnFlightRequestResults);
 
-    // Group return flights by price
-    const groupReturnFlights: FlightsByPrice[] = groupFlightsByPrice(allReturnFlights).filter(
-      x => x.flights.length > 0,
-    );
+    // Merge and order return flights by price and departureTime
+    const groupReturnFlights: FlightsByPrice[] = mergeFlightsByPriceAndOrderByPriceAndDate(allReturnFlights);
 
-    // Group departure flights by price and return flights
-    const flights: FlightsByPrice[] = groupFlightsByPrice(allDepartureFlights, groupReturnFlights);
-
-    // Order departureflights by price
-    return flights.sort((firstFlight, secondFlight) => firstFlight.price - secondFlight.price);
+    // Return merge and order departure flights with return flights by price and departureTime
+    return mergeFlightsByPriceAndOrderByPriceAndDate(allDepartureFlights, groupReturnFlights);
   }
 
   toJSON(): FlightSearchResult {
