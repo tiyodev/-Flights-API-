@@ -35,7 +35,7 @@ A environment variable file must be created.
 
 Example:
 
-```.env
+```js
 
 NODE_ENV=dev
 PORT=3000
