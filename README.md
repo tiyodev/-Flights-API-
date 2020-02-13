@@ -237,4 +237,4 @@ With more time I would've liked to do:
 - More unit tests
 - Generate API documentation / UI to test (like [swagger](https://swagger.io/))
 
-I would be happy to answer all your questions, especially on the aggregation algorithm and the choice of the data structure.
+I would be happy to answer all your questions.
