@@ -4,10 +4,9 @@
   "description": "Technical test",
   "main": "app.js",
   "scripts": {
-    "build:prod": "rimraf dist && npm run lint && npm run build",
-    "build": "tsc",
-    "start": "node ./dist/server.js",
+    "start:prod": "node ./dist/server.js",
     "start:dev": "ts-node ./src/server.ts",
+    "build": "rimraf dist && npm run lint && tsc",
     "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
     "test": "jest"
   },
