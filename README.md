@@ -8,7 +8,7 @@ Flights is get from multiple supplier (JAZZ and MOON).
 
 ## Technical choice
 
-For the test i choose to use the framework [Express](https://github.com/expressjs/express) with [Express](https://www.typescriptlang.org/).
+For the test i choose to use the framework [Express](https://github.com/expressjs/express) with [Typescript](https://www.typescriptlang.org/).
 
 I used the minimal of dependencies.
 
@@ -22,7 +22,8 @@ For the Flights API I tried to use a JSON format with the least amount of redund
 
 This is a [Node.js](https://nodejs.org/en/) module available through the [npm registry](https://www.npmjs.com/).
 
-Before installing, [download and install Node.js](https://nodejs.org/en/download/). Node.js last version is required.
+Before installing, [download and install Node.js](https://nodejs.org/en/download/). 
+Node.js last version is required.
 
 ```bash
 $ npm install && npm update
@@ -92,7 +93,7 @@ For the test, I manually created two users:
 Example:
 
 ```bash
-    curl -X POST http://localhost:3000/api/v1/user/signIn -d '{"username": "admin", "password": "password123admin"}' -H "Content-Type: application/json"
+    curl -X POST http://localhost:3000/api/v1/user/signIn -d "{\"username\":\"admin\",\"password\":\"password123admin\"}" -H "Content-Type: application/json"
 ```
 
 This API return a json like:
@@ -118,7 +119,7 @@ They are two main uses:
 Example:
 
 ```bash
-    curl -X GET http://localhost:3000/api/v1/flights?departure_airport=CDG&arrival_airport=LHR&departure_date=2019-03-28&tripType=OW -H "Content-Type: application/json"
+    curl -X GET http://localhost:3000/api/v1/flights -d "departure_airport=CDG&arrival_airport=LHR&departure_date=2019-03-28&tripType=OW" -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6ImFkbWluIiwicGFzc3dvcmQiOiJwYXNzd29yZDEyM2FkbWluIiwiaWF0IjoxNTgxNTUzNzMwLCJleHAiOjE1ODE1NTQwMzB9.u21p6roQl6O-tbOw-GCH9-Qzy-Yd83p8fSnfy44fbJQ"
 ```
 
 This API return a json like:
@@ -150,7 +151,7 @@ This API return a json like:
 Example:
 
 ```bash
-    curl -X GET http://localhost:3000/api/v1/flights?departure_airport=CDG&arrival_airport=LHR&departure_date=2019-03-28&return_date=2019-03-28&tripType=R -H "Content-Type: application/json"
+    curl -X GET http://localhost:3000/api/v1/flights -d "departure_airport=CDG&arrival_airport=LHR&departure_date=2019-03-28&return_date=2019-03-28&tripType=R" -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6ImFkbWluIiwicGFzc3dvcmQiOiJwYXNzd29yZDEyM2FkbWluIiwiaWF0IjoxNTgxNTUzNzMwLCJleHAiOjE1ODE1NTQwMzB9.u21p6roQl6O-tbOw-GCH9-Qzy-Yd83p8fSnfy44fbJQ"
 ```
 
 This API return a json like:
