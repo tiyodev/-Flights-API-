@@ -29,6 +29,25 @@ Node.js last version is required.
 $ npm install && npm update
 ```
 
+## Env file
+
+A environment variable file must be created.
+
+Example:
+
+```.env
+
+NODE_ENV=dev
+PORT=3000
+#LOGGER_LEVEL possible value ALL, DEBUG, INFO, ERROR, OFF
+LOGGER_LEVEL=INFO
+JWT_SECRET=cbkq8Kbz6BnD8uS8
+JWT_EXPIRY_SECONDS=300
+AIR_JAZZ_SUPPLIER_URL=http://flights.beta.bcmenergy.fr/jazz/flights
+AIR_MOON_SUPPLIER_URL=http://flights.beta.bcmenergy.fr/moon/flights
+
+```
+
 ## Running the app
 
 ```bash
