@@ -192,11 +192,13 @@ This API return a json like:
 ## Bonus
 
  * We would like to be able to cache and reuse results. Be aware that the response can be quite big / huge.
-  -> I didn't have the time to implement it however, if I had to, I'd use [Redis](https://redis.io/) to manage the cache. 
+
+  --> I didn't have the time to implement it however, if I had to, I'd use [Redis](https://redis.io/) to manage the cache. 
   Warning: care must be taken when setting up a caching system. A good strategy must be defined in order to keep optimal performance.
 
  * We would like to be able to perform searches using a search radius. See "Bonus // Search radius" paragraph
-  -> I didn't have the time to implement however, if I had to do, I'd use a database to store all the airports and their geographical coordinates.
+
+  --> I didn't have the time to implement however, if I had to do, I'd use a database to store all the airports and their geographical coordinates.
   I'd use [PostgreSql](https://www.postgresql.org/) with its [PostGis](https://postgis.net/) plugin which allows to do radius searches easily and with optimal performance.
   I've already used this stack to search for routes with OSM coordinates.
 
@@ -209,13 +211,13 @@ This API return a json like:
 
   Two main possibilities:
 
-  -> We can use a docker container (see dockerfile). Docker is usefull when to deploy on a webapp on the cloud or when we have multiple application with multiple version of dependences in the same server.
+  --> We can use a docker container (see dockerfile). Docker is usefull when to deploy on a webapp on the cloud or when we have multiple application with multiple version of dependences in the same server.
   
-  -> If we deploy on a server without incompatibilities, then it may be sufficient to use [NGinx](https://www.nginx.com/) as proxy/web server/load balancer and [PM2](https://pm2.keymetrics.io/) as process manager.
+  --> If we deploy on a server without incompatibilities, then it may be sufficient to use [NGinx](https://www.nginx.com/) as proxy/web server/load balancer and [PM2](https://pm2.keymetrics.io/) as process manager.
 
   * What technologies would you use to have a CI/CD running.
   
-  -> We can use solution like Jenkins, Azure devops or circleci to do it. It's important to couple a CI/CD with a git strategy. I used to use git with gitflow strategy.
+  --> We can use solution like Jenkins, Azure devops or circleci to do it. It's important to couple a CI/CD with a git strategy. I used to use git with gitflow strategy.
 
   Example of process for the CI are:
   - Get source
