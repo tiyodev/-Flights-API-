@@ -41,10 +41,10 @@ NODE_ENV=dev
 PORT=3000
 #LOGGER_LEVEL possible value ALL, DEBUG, INFO, ERROR, OFF
 LOGGER_LEVEL=INFO
-JWT_SECRET=cbkq8Kbz6BnD8uS8
+JWT_SECRET=your secret
 JWT_EXPIRY_SECONDS=300
-AIR_JAZZ_SUPPLIER_URL=http://flights.beta.bcmenergy.fr/jazz/flights
-AIR_MOON_SUPPLIER_URL=http://flights.beta.bcmenergy.fr/moon/flights
+AIR_JAZZ_SUPPLIER_URL=jazz api url http://...
+AIR_MOON_SUPPLIER_URL=moon api url http://...
 
 ```
 
